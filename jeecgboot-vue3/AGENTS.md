@@ -10,7 +10,7 @@ This file provides repository guidance for Codex when working in this project.
 
 JeecgBoot Vue3 (v3.8.3) is an enterprise low-code admin platform frontend. It is built on Vue 3, TypeScript, Vite, Ant Design Vue 4, and Pinia. It was originally forked from Vben Admin and customized with JeecgBoot-specific components such as online forms, code generation, workflow, and related low-code modules.
 
-This workspace uses Git for version control. Follow root repository rules: commit on each version/change, and never push unless explicitly instructed by the user.
+This workspace uses Git for version control. Follow root repository rules: commit on each version/change, write commit messages in Chinese, and never push unless explicitly instructed by the user.
 
 Backend: Spring Boot (JeecgBoot), expected at `http://127.0.0.1:8080/jeecg-boot` during development.
 
