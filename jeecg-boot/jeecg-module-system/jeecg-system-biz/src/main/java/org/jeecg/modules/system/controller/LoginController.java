@@ -957,7 +957,7 @@ public class LoginController {
      */
     private String validateCaptcha(SysLoginModel sysLoginModel, Result<JSONObject> result) {
 		// 判断是否启用登录验证码校验
-		if (jeecgBaseConfig.getFirewall() != null && Boolean.FALSE.equals(jeecgBaseConfig.getFirewall().getEnableLoginCaptcha())) {
+		if (jeecgBaseConfig.getFirewall() == null || Boolean.FALSE.equals(jeecgBaseConfig.getFirewall().getEnableLoginCaptcha())) {
 			log.warn("关闭了登录验证码校验，跳过验证码校验！");
 			return "LoginWithoutVerifyCode";
 		}

@@ -88,7 +88,6 @@
   import { IconFont } from '/@/utils/iconfont2';
   import { Rule } from '/@/components/Form';
   import { useFormRules } from '/@/views/sys/login/useLogin';
-  import { getCodeInfo } from '/@/api/sys/user';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useUserStore } from '/@/store/modules/user';
   import AppTenant from './component/AppTenant.vue';

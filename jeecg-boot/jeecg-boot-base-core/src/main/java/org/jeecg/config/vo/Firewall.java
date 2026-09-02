@@ -31,7 +31,7 @@ public class Firewall {
     /**
      * 是否开启登录验证码校验（true 开启；false 关闭并跳过验证码逻辑）
      */
-    private Boolean enableLoginCaptcha = true;
+    private Boolean enableLoginCaptcha = false;
 
     //update-begin---author:wangshuai ---date:2026-06-29  for：【QQYUN-16619】三级等保密码强度开关-----------
     /**

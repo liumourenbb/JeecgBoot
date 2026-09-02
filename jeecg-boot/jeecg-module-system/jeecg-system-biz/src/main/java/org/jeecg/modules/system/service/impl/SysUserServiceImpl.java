@@ -3073,8 +3073,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		}else{
 			String password  = AesEncryptUtil.resolvePassword(jsonObject.getString("password"));
 			log.debug("登录密码，原始密码:{}，解密密码:{}" , jsonObject.getString("password"), password);
-            // 手机端没有验证码，不做校验
-			if(!"APP".equalsIgnoreCase(source)){
+            // 手机端没有验证码，且关闭登录验证码时不校验
+			boolean enableCaptcha = jeecgBaseConfig.getFirewall() != null && Boolean.TRUE.equals(jeecgBaseConfig.getFirewall().getEnableLoginCaptcha());
+			if(!"APP".equalsIgnoreCase(source) && enableCaptcha){
 				// step.1 验证码check
 				SysLoginModel sysLoginModel = new SysLoginModel();
 				String inputCode = jsonObject.getString("inputCode");

@@ -46,16 +46,6 @@
                           <a-input class="fix-auto-fill" type="password" :placeholder="t('sys.login.password')" v-model:value="formData.password" />
                         </a-form-item>
                       </div>
-                      <div class="aui-inputClear">
-                        <i class="icon icon-code"></i>
-                        <a-form-item>
-                          <a-input class="fix-auto-fill" type="text" :placeholder="t('sys.login.inputCode')" v-model:value="formData.inputCode" />
-                        </a-form-item>
-                        <div class="aui-code">
-                          <img v-if="randCodeData.requestCodeSuccess" :src="randCodeData.randCodeImage" @click="handleChangeCheckCode" />
-                          <img v-else style="margin-top: 2px; max-width: initial" :src="codeImg" @click="handleChangeCheckCode" />
-                        </div>
-                      </div>
                       <div class="aui-inputClear" v-if="showDepart">
                         <i class="icon icon-depart"></i>
                         <div class="JLoginSelectDept">
@@ -174,9 +164,8 @@
   </div>
 </template>
 <script lang="ts" setup name="login-mini">
-  import { getCaptcha, getCodeInfo } from '/@/api/sys/user';
+  import { getCaptcha } from '/@/api/sys/user';
   import { computed, defineAsyncComponent, onMounted, reactive, ref, toRaw, unref, watch } from 'vue';
-  import codeImg from '/@/assets/images/checkcode.png';
   import { useUserStore } from '/@/store/modules/user';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useI18n } from '/@/hooks/web/useI18n';
@@ -208,11 +197,6 @@
   const $ls = createLocalStorage();
   const localeStore = useLocaleStore();
   const showLocale = localeStore.getShowPicker;
-  const randCodeData = reactive<any>({
-    randCodeImage: '',
-    requestCodeSuccess: false,
-    checkKey: null,
-  });
   // 记住用户名
   const rememberMe = ref<boolean>(false);
   const REMEMBER_USERNAME_KEY = 'LOGIN_REMEMBER_USERNAME';
@@ -221,7 +205,6 @@
   const type = ref<string>('login');
   //账号登录表单字段
   const formData = reactive<any>({
-    inputCode: '',
     username: 'admin',
     password: '123456',
     loginOrgCode: '',
@@ -276,11 +259,11 @@
       return deptName;
     };
   })
-  //监听验证码和输入框的修改
+  //监听账号和密码或手机验证码的修改
   watch(
-      () => [formData.inputCode, phoneFormData.smscode],
+      () => [formData.username, formData.password, phoneFormData.smscode],
       () => {
-        if ((formData.inputCode && formData.inputCode.length == 4)
+        if ((formData.username && formData.password)
             || (phoneFormData.smscode && phoneFormData.smscode.length == 6)) {
             checkAccount()
         }
@@ -295,7 +278,7 @@
         formData.loginOrgCode = null;
         phoneFormData.loginOrgCode = null;
         departList.value = [];
-        if ((formData.inputCode && formData.inputCode.length == 4)
+        if ((formData.username && formData.password)
             || (phoneFormData.smscode && phoneFormData.smscode.length == 6)) {
           checkAccount()
         }
@@ -320,7 +303,6 @@
         let params = {...finalFormData, loginType: activeIndex.value === 'accountLogin' ? 'account' : 'phone'};
         if (loginType == 'account') {
           params['password'] = encryptAESCBC(formData.password);
-          params['checkKey'] = randCodeData.checkKey;
         }
         const res = await defHttp.post({
           url: '/sys/loginGetUserDeparts',
@@ -350,18 +332,6 @@
     },500)
   }
  //**********************查询部门逻辑end*************************************************
-  /**
-   * 获取验证码
-   */
-  function handleChangeCheckCode() {
-    formData.inputCode = '';
-    // 代码逻辑说明: [QQYUN-10775]验证码可以复用 #7674------------
-    randCodeData.checkKey = new Date().getTime() + Math.random().toString(36).slice(-4); // 1629428467008;
-    getCodeInfo(randCodeData.checkKey).then((res) => {
-      randCodeData.randCodeImage = res;
-      randCodeData.requestCodeSuccess = true;
-    });
-  }
 
   /**
    * 切换登录方式
@@ -401,8 +371,6 @@
           password: encryptedPassword,
           username: formData.username,
           loginOrgCode: formData.loginOrgCode,
-          captcha: formData.inputCode,
-          checkKey: randCodeData.checkKey,
           mode: 'none', //不要默认的错误提示
         })
       );
@@ -425,7 +393,6 @@
         description: error.message || t('sys.login.networkExceptionMsg'),
         duration: 3,
       });
-      handleChangeCheckCode();
     } finally {
       loginLoading.value = false;
     }

@@ -8,26 +8,6 @@
       <InputPassword size="large" visibilityToggle v-model:value="formData.password" :placeholder="t('sys.login.password')" />
     </FormItem>
 
-    <!--验证码-->
-    <ARow class="enter-x">
-      <ACol :span="12">
-        <FormItem name="inputCode" class="enter-x">
-          <Input size="large" v-model:value="formData.inputCode" :placeholder="t('sys.login.inputCode')" style="min-width: 100px" />
-        </FormItem>
-      </ACol>
-      <ACol :span="8">
-        <FormItem :style="{ 'text-align': 'right', 'margin-left': '20px' }" class="enter-x">
-          <img
-            v-if="randCodeData.requestCodeSuccess"
-            style="margin-top: 2px; max-width: initial"
-            :src="randCodeData.randCodeImage"
-            @click="handleChangeCheckCode"
-          />
-          <img v-else style="margin-top: 2px; max-width: initial" src="../../../assets/images/checkcode.png" @click="handleChangeCheckCode" />
-        </FormItem>
-      </ACol>
-    </ARow>
-
     <ARow class="enter-x">
       <ACol :span="12">
         <FormItem>
@@ -86,7 +66,7 @@
   <ThirdModal ref="thirdModalRef"></ThirdModal>
 </template>
 <script lang="ts" setup>
-  import { reactive, ref, toRaw, unref, computed, onMounted } from 'vue';
+  import { reactive, ref, toRaw, unref, computed } from 'vue';
 
   import { Checkbox, Form, Input, Row, Col, Button, Divider } from 'ant-design-vue';
   import { GithubFilled, WechatFilled, DingtalkCircleFilled } from '@ant-design/icons-vue';
@@ -99,8 +79,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getCodeInfo } from '/@/api/sys/user';
-  import {  encryptAESCBC } from '/@/utils/cipher';
+  import { encryptAESCBC } from '/@/utils/cipher';
 
   const ACol = Col;
   const ARow = Row;
@@ -122,12 +101,6 @@
   const formData = reactive({
     account: 'admin',
     password: '123456',
-    inputCode: '',
-  });
-  const randCodeData = reactive({
-    randCodeImage: '',
-    requestCodeSuccess: false,
-    checkKey: null,
   });
 
   const { validForm } = useFormValid(formRef);
@@ -148,8 +121,6 @@
         toRaw({
           password: encryptedPassword,
           username: data.account,
-          captcha: data.inputCode,
-          checkKey: randCodeData.checkKey,
           mode: 'none', //不要默认的错误提示
         })
       );
@@ -167,17 +138,7 @@
         duration: 3,
       });
       loading.value = false;
-      handleChangeCheckCode();
     }
-  }
-  function handleChangeCheckCode() {
-    formData.inputCode = '';
-    // 代码逻辑说明: [QQYUN-10775]验证码可以复用 #7674------------
-    randCodeData.checkKey = new Date().getTime() + Math.random().toString(36).slice(-4); // 1629428467008;
-    getCodeInfo(randCodeData.checkKey).then((res) => {
-      randCodeData.randCodeImage = res;
-      randCodeData.requestCodeSuccess = true;
-    });
   }
 
   /**
@@ -187,8 +148,4 @@
   function onThirdLogin(type) {
     thirdModalRef.value.onThirdLogin(type);
   }
-  //初始化验证码
-  onMounted(() => {
-    handleChangeCheckCode();
-  });
 </script>
