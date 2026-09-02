@@ -3,12 +3,27 @@ logging:
     org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR
     
 spring:
-  main:
-    # 启动加速 (建议开发环境)
-    lazy-initialization: true
-  application:
-    name: jeecg-system
-  config:
-    import: optional:classpath:config/application-liteflow.yml
   profiles:
     active: '@profile.name@'
+  application:
+    name: jeecg-system
+  main:
+    allow-circular-references: true
+  config:
+    import:
+      - optional:nacos:${spring.application.name}-@profile.name@.yaml
+      - optional:classpath:config/application-liteflow.yml
+  cloud:
+    nacos:
+      config:
+        server-addr: @config.server-addr@
+        group: @config.group@
+        namespace: @config.namespace@
+        username: @config.username@
+        password: @config.password@
+      discovery:
+        server-addr: ${spring.cloud.nacos.config.server-addr}
+        group: @config.group@
+        namespace: @config.namespace@
+        username: @config.username@
+        password: @config.password@
