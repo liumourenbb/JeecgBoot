@@ -7,9 +7,9 @@ jeecg:
 spring:
   data:
     redis:
-      database: 0
-      host: jeecg-boot-redis
-      port: 6379
-      password:
+      database: ${REDIS_DB:0}
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PWD:}
 knife4j:
   production: false

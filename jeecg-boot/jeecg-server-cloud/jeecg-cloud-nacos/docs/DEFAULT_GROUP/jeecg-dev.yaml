@@ -30,19 +30,19 @@ spring:
           slow-sql-millis: 5000
       datasource:
         master:
-          url: jdbc:mysql://jeecg-boot-mysql:3306/jeecg-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
-          username: root
-          password: root
+          url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:jeecg-boot}?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+          username: ${MYSQL_USER:root}
+          password: ${MYSQL_PWD:root}
           driver-class-name: com.mysql.cj.jdbc.Driver
         # sharding-db:
         #  driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
         #  url: jdbc:shardingsphere:nacos:sharding.yaml?serverAddr=${spring.cloud.nacos.config.server-addr}&namespace=${spring.cloud.nacos.config.namespace}&group=${spring.cloud.nacos.config.group}
   data:
     redis:
-      database: 0
-      host: jeecg-boot-redis
-      password:
-      port: 6379
+      database: ${REDIS_DB:0}
+      host: ${REDIS_HOST:localhost}
+      password: ${REDIS_PWD:}
+      port: ${REDIS_PORT:6379}
   rabbitmq:
     host: jeecg-boot-rabbitmq
     username: guest
@@ -108,8 +108,8 @@ jeecg:
     logPath: logs/jeecg/job/jobhandler/
     logRetentionDays: 30
   redisson:
-    address: jeecg-boot-redis:6379
-    password:
+    address: ${REDIS_HOST:localhost}:${REDIS_PORT:6379}
+    password: ${REDIS_PWD:}
     type: STANDALONE
     enabled: true
   ai-chat:

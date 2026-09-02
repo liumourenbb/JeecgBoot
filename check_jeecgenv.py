@@ -114,9 +114,9 @@ def print_mysql_config():
     print("""
 spring.datasource.dynamic.datasource:
   master:
-    url: jdbc:mysql://127.0.0.1:3306/jeecg-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
-    username: root       # ← 可能需要修改
-    password: root       # ← 可能需要修改
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:jeecg-boot}?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PWD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
 """)
 
@@ -163,11 +163,11 @@ def print_redis_config():
     """打印Redis配置并提示需要修改的位置"""
     print("\nRedis配置参考 (请检查以下配置是否正确):")
     print("""
-spring.redis:
-  database: 0
-  host: 127.0.0.1        # ← 可能需要修改
-  port: 6379             # ← 可能需要修改
-  password: ''           # ← 如果需要密码请修改
+spring.data.redis:
+  database: ${REDIS_DB:0}
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PWD:}
 """)
 
 def main():
