@@ -2,6 +2,7 @@
 **/.idea
 *.iml
 rebel.xml
+.vscode/
 
 ## backend
 **/target
@@ -16,3 +17,5 @@ derby.log
 .cursor
 .history
 .claude
+.agents/
+.mcp.json
