@@ -1,34 +1,49 @@
 spring:
   # ============================================================
-  # 数据源配置（通过环境变量注入，本地开发使用默认值）
-  #
-  # 环境变量说明：
-  #   MYSQL_HOST  - MySQL 主机地址（默认 localhost）
-  #   MYSQL_PORT  - MySQL 端口（默认 3306）
-  #   MYSQL_DB    - 数据库名（默认 jeecg-boot）
-  #   MYSQL_USER  - 数据库用户名（默认 root）
-  #   MYSQL_PWD   - 数据库密码（默认 root）
-  # ============================================================
-  datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:jeecg-boot}?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
-    username: ${MYSQL_USER:root}
-    password: ${MYSQL_PWD:root}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  # ============================================================
-  # Flyway 配置
+  # Flyway 多数据源版本管理配置
   # ============================================================
   flyway:
-    # 是否启用 flyway（默认 false，需显式开启）
+    # 全局总开关（默认 true，若为 false 则所有数据源均不迁移）
     enabled: ${FLYWAY_ENABLED:true}
-    # SQL 脚本存放路径
-    locations: classpath:flyway/sql/mysql
+    # 编码格式
+    encoding: UTF-8
     # 是否禁用 clean（生产环境必须为 true，否则会清空数据库！）
     clean-disabled: true
-    # 数据库非空时自动创建基线，避免首次运行报错
+    # 数据库非空时自动创建基线，避免已有表时报错
     baseline-on-migrate: true
     # 迁移时是否校验脚本内容
     validate-on-migrate: true
+
+    # ============================================================
+    # 多数据源列表配置
+    # 环境变量说明：
+    #   MYSQL_HOST        - MySQL 主机地址（默认 localhost）
+    #   MYSQL_PORT        - MySQL 端口（默认 3306）
+    #   MYSQL_USER        - 数据库用户名（默认 root）
+    #   MYSQL_PWD         - 数据库密码（默认 root）
+    #   MYSQL_DB          - 业务主数据库名（默认 jeecg-boot）
+    #   MYSQL_NACOS_DB    - Nacos 数据库名（默认 nacos）
+    # ============================================================
+    datasources:
+      # 1. 业务主库数据源 (JeecgBoot 主业务库)
+      master:
+        enabled: ${FLYWAY_MASTER_ENABLED:true}
+        url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:jeecg-boot}?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+        username: ${MYSQL_USER:root}
+        password: ${MYSQL_PWD:root}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        locations: classpath:flyway/sql/mysql
+        auto-create-database: true
+
+      # 2. Nacos 配置中心数据源 (Nacos 官方元数据与配置文件库)
+      nacos:
+        enabled: ${FLYWAY_NACOS_ENABLED:true}
+        url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_NACOS_DB:nacos}?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+        username: ${MYSQL_USER:root}
+        password: ${MYSQL_PWD:root}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        locations: classpath:flyway/sql/nacos
+        auto-create-database: true
 
 logging:
   level:

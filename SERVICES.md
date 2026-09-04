@@ -199,19 +199,24 @@ flowchart TD
 ### 6.1 `jeecg-module-flyway`
 - **模块路径**: `jeecg-boot/jeecg-module-system/jeecg-module-flyway`
 - **主启动类**: `org.jeecg.flyway.FlywayApplication`
-- **运行模式**: 独立命令行应用（`WebApplicationType.NONE`，无 Web 容器开销）
-- **定位**: **Flyway 独立数据库版本升级与数据迁移工具**。
+- **运行模式**: 独立命令行应用（`WebApplicationType.NONE`，无 Web 容器开销，迁移完成自动退出）
+- **定位**: **Flyway 独立数据库版本升级与数据迁移工具（支持多数据源）**。
 - **主要职能**:
-  - 存放平台所有版本增量变更 SQL 脚本（`flyway/sql/mysql/`）。
-  - 通过环境变量或命令行注入 MySQL 连接信息，执行全量/增量脚本迁移。
+  - **多数据源协同迁移**:
+    - **业务主库 (`master`)**: 对应 `jeecg-boot` 库，管理平台全量表结构与版本增量迁移（`flyway/sql/mysql/`）。
+    - **Nacos配置库 (`nacos`)**: 对应 `nacos` 库，管理 Nacos 服务端所需的配置与元数据表结构（`flyway/sql/nacos/`）。
+  - **自动建库保护**: 自动探测目标库是否存在，若不存在则安全执行 `CREATE DATABASE IF NOT EXISTS`。
+  - **统一环境变量适配**: 支持 `MYSQL_HOST` / `MYSQL_PORT` / `MYSQL_USER` / `MYSQL_PWD` / `MYSQL_DB` / `MYSQL_NACOS_DB` 注入。
   - 具备版本基线校验、防误删保护（`clean-disabled: true`），执行完毕后进程自动安全退出。
 - **使用命令**:
   ```bash
+  # 方式 1：使用默认环境变量启动
+  java -jar jeecg-module-flyway-3.9.5.jar
+
+  # 方式 2：命令行覆盖特定数据源
   java -jar jeecg-module-flyway-3.9.5.jar \
-    --spring.datasource.url="jdbc:mysql://localhost:3306/jeecg-boot?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai" \
-    --spring.datasource.username=root \
-    --spring.datasource.password=root \
-    --spring.flyway.enabled=true
+    --spring.flyway.datasources.master.url="jdbc:mysql://localhost:3306/jeecg-boot?..." \
+    --spring.flyway.datasources.nacos.url="jdbc:mysql://localhost:3306/nacos?..."
   ```
 
 ---
