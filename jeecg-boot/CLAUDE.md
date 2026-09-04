@@ -104,7 +104,12 @@ Optional microservices modules (activated via `-P SpringCloud`):
 
 **Supported:** MySQL 8.0+ (default), PostgreSQL, Oracle 11g+, SQL Server 2017+, MariaDB, DM8 (达梦), KingBase ES. Database-specific configs are in `application-{dbtype}.yml` profiles.
 
-**Initial setup:** Import `db/jeecgboot-mysql-5.7.sql` for the base schema. Flyway handles incremental migrations (scripts organized by date folders like `202512/`).
+**Database Rules:**
+- Default database is **MySQL**.
+- All subsequent database changes (DDL / DML) **must be managed via Flyway migration scripts** under `jeecg-module-system/jeecg-module-flyway/src/main/resources/flyway/sql/mysql/`.
+- **Direct database modification is strictly prohibited.**
+
+**Initial setup:** Import `db/jeecgboot-mysql-5.7.sql` for the base schema. Flyway handles incremental migrations (naming format: `V[version/date]_[seq]__[module]_[action]_[desc].sql`).
 
 **Flyway note:** In dev mode, `spring.main.lazy-initialization=true` is enabled for startup speed, which can interfere with Flyway auto-config. Flyway auto-config is explicitly excluded and managed separately.
 
