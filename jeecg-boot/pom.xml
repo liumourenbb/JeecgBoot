@@ -199,6 +199,12 @@
 				<artifactId>jeecg-system-biz</artifactId>
 				<version>${jeecgboot.version}</version>
 			</dependency>
+			<!-- flyway 数据库版本管理模块 -->
+			<dependency>
+				<groupId>org.jeecgframework.boot3</groupId>
+				<artifactId>jeecg-module-flyway</artifactId>
+				<version>${jeecgboot.version}</version>
+			</dependency>
 
 			<!-- jeecg tools -->
 			<dependency>
