@@ -32,45 +32,47 @@
                   </div>
                 </div>
                 <div class="aui-form-box" style="height: 240px">
-                  <a-form ref="loginRef" :model="formData" v-if="activeIndex === 'accountLogin'" @keyup.enter.native="loginHandleClick">
-                    <div class="aui-account">
-                      <div class="aui-inputClear">
-                        <i class="icon icon-code"></i>
-                        <a-form-item>
-                          <a-input class="fix-auto-fill" :placeholder="t('sys.login.userName')" v-model:value="formData.username" />
-                        </a-form-item>
-                      </div>
-                      <div class="aui-inputClear">
-                        <i class="icon icon-password"></i>
-                        <a-form-item>
-                          <a-input class="fix-auto-fill" type="password" :placeholder="t('sys.login.password')" v-model:value="formData.password" />
-                        </a-form-item>
-                      </div>
-                      <div class="aui-inputClear" v-if="showDepart">
-                        <i class="icon icon-depart"></i>
-                        <div class="JLoginSelectDept">
-                          <a-select allow-clear style="width: 100%" :bordered="false" v-model:value="formData.loginOrgCode" :placeholder="t('sys.login.loginOrgCode')">
-                            <template #suffixIcon>
-                              <Icon icon="ant-design:gold-outline" />
-                            </template>
-                            <template v-for="depart in departList" :key="depart.orgCode">
-                              <a-select-option :value="depart.orgCode">{{ getShortDeptName(depart.label) }}</a-select-option>
-                            </template>
-                          </a-select>
+                  <template v-if="activeIndex === 'accountLogin'">
+                    <a-form ref="loginRef" :model="formData" @keyup.enter.native="loginHandleClick">
+                      <div class="aui-account">
+                        <div class="aui-inputClear">
+                          <i class="icon icon-code"></i>
+                          <a-form-item>
+                            <a-input class="fix-auto-fill" :placeholder="t('sys.login.userName')" v-model:value="formData.username" />
+                          </a-form-item>
                         </div>
-                      </div>
-                      <div class="aui-flex">
-                        <div class="aui-flex-box">
-                          <div class="aui-choice">
-                            <a-checkbox v-model:checked="rememberMe">{{ t('sys.login.rememberMe') }}</a-checkbox>
+                        <div class="aui-inputClear">
+                          <i class="icon icon-password"></i>
+                          <a-form-item>
+                            <a-input class="fix-auto-fill" type="password" :placeholder="t('sys.login.password')" v-model:value="formData.password" />
+                          </a-form-item>
+                        </div>
+                        <div class="aui-inputClear" v-if="showDepart">
+                          <i class="icon icon-depart"></i>
+                          <div class="JLoginSelectDept">
+                            <a-select allow-clear style="width: 100%" :bordered="false" v-model:value="formData.loginOrgCode" :placeholder="t('sys.login.loginOrgCode')">
+                              <template #suffixIcon>
+                                <Icon icon="ant-design:gold-outline" />
+                              </template>
+                              <template v-for="depart in departList" :key="depart.orgCode">
+                                <a-select-option :value="depart.orgCode">{{ getShortDeptName(depart.label) }}</a-select-option>
+                              </template>
+                            </a-select>
                           </div>
                         </div>
-                        <div class="aui-forget">
-                          <a @click="forgetHandelClick"> {{ t('sys.login.forgetPassword') }}</a>
+                      </div>
+                    </a-form>
+                    <div class="aui-flex">
+                      <div class="aui-flex-box">
+                        <div class="aui-choice">
+                          <a-checkbox v-model:checked="rememberMe">{{ t('sys.login.rememberMe') }}</a-checkbox>
                         </div>
                       </div>
+                      <div class="aui-forget">
+                        <a @click="forgetHandelClick"> {{ t('sys.login.forgetPassword') }}</a>
+                      </div>
                     </div>
-                  </a-form>
+                  </template>
                   <a-form v-else ref="phoneFormRef" :model="phoneFormData" @keyup.enter.native="loginHandleClick">
                     <div class="aui-account phone">
                       <div class="aui-inputClear phoneClear">
@@ -504,7 +506,6 @@
     Object.assign(phoneFormData, { mobile: "", smscode: "" });
     type.value = 'login';
     activeIndex.value = 'accountLogin';
-    handleChangeCheckCode();
   }
 
   /**
@@ -530,8 +531,6 @@
   }
 
   onMounted(() => {
-    //加载验证码
-    handleChangeCheckCode();
     // 恢复已记住的用户名
     const saved = $ls.get(REMEMBER_USERNAME_KEY);
     if (saved) {
@@ -547,6 +546,16 @@
 
   :deep(.ant-input:focus) {
     box-shadow: none;
+  }
+  .aui-choice {
+    :deep(.ant-checkbox-wrapper) {
+      font-size: 13px;
+      user-select: none;
+    }
+    :deep(.ant-checkbox-input) {
+      width: 100% !important;
+      height: 100% !important;
+    }
   }
   .aui-get-code {
     float: right;
