@@ -44,6 +44,15 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
   console.log('[init] Start Port: ', VITE_PORT);
   console.debug('[init] Vite Proxy Config: ', VITE_PROXY);
 
+  // Vite 6+ 限制 Host 头以防 DNS Rebinding 攻击，允许特定域名访问开发服务器（支持通过 VITE_ALLOWED_HOSTS 扩展）
+  const envAllowedHosts = env.VITE_ALLOWED_HOSTS;
+  const allowedHosts: string[] | true =
+    envAllowedHosts === 'true'
+      ? true
+      : envAllowedHosts
+      ? envAllowedHosts.split(',').map((h) => h.trim()).filter(Boolean)
+      : ['jeecg.xvuvx.com', '.xvuvx.com'];
+
   return {
     base: isQiankunMicro ? VITE_GLOB_QIANKUN_MICRO_APP_ENTRY : VITE_PUBLIC_PATH,
     root,
@@ -88,6 +97,7 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
       port: VITE_PORT,
       proxy: createProxy(VITE_PROXY),
       ...serverOptions,
+      allowedHosts,
       // 启动时预构建部分常用入口页面，访问时更快
       warmup: {
         clientFiles: [
@@ -108,6 +118,10 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
         ],
       },
       // update-end--author:liaozhiyang---date:20260306---for:【QQYUN-14801】vite启动的时候，预构建一些入口页面，访问时快一些
+    },
+    preview: {
+      port: VITE_PORT,
+      allowedHosts,
     },
     build: {
       // Vite 8 默认使用 Oxc minifier；'esbuild' 已 deprecated。
