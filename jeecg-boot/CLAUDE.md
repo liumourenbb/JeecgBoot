@@ -34,6 +34,8 @@ mvn clean package -P SpringCloud
 ./start-docker-compose.sh   # or start-docker-compose.bat on Windows
 ```
 
+> **Startup Rule (Nacos Pre-check)**: Before starting any service/module other than Nacos (e.g., Gateway, System Cloud, Sentinel, Monitor), **always verify that Nacos (`jeecg-cloud-nacos` on port 8848) is running**. Otherwise other services will fail to start due to missing configuration/registry.
+
 ## Module Architecture
 
 ```
