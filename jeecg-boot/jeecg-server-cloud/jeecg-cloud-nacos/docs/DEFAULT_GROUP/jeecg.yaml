@@ -16,7 +16,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: metrics,httpexchanges,jeecghttptrace
+        include: health,metrics,httpexchanges,jeecghttptrace
     health:
       sensitive: true
   endpoint:

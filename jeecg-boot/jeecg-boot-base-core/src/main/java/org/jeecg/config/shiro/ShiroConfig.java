@@ -179,8 +179,8 @@ public class ShiroConfig {
         //App vue3版本查询版本接口
         filterChainDefinitionMap.put("/sys/version/app3version", "anon");
 
-        //性能监控——安全隐患泄露TOEKN（durid连接池也有）
-        //filterChainDefinitionMap.put("/actuator/**", "anon");
+        //性能监控——放行 Actuator 端点供 Spring Boot Admin 等监控中心探测健康状态
+        filterChainDefinitionMap.put("/actuator/**", "anon");
         //测试模块排除
         filterChainDefinitionMap.put("/test/seata/**", "anon");
 

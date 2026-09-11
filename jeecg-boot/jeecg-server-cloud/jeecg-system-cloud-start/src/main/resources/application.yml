@@ -3,7 +3,16 @@ logging:
     org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR
 server:
   port: 7001
-  
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,httpexchanges,jeecghttptrace
+  endpoint:
+    health:
+      show-details: ALWAYS
+
 spring:
   application:
     name: jeecg-system
